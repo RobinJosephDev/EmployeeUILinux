@@ -1,0 +1,25 @@
+{
+	"folders": [
+		{
+			"name": "LinkLoadsAPI",
+			"path": "../../../../LinkLoadsAPI"
+		},
+		{
+			"name": "EmployeeUI",
+			"path": "../../.."
+		},
+		{
+			"name": "AdminUI",
+			"path": "../../../../AdminUI"
+		},
+		{
+			"name": "CarrierUI",
+			"path": "../../../../CarrierUI"
+		},
+		{
+			"name": "CustomerUI",
+			"path": "../../../../CustomerUI"
+		}
+	],
+	"settings": {}
+}
