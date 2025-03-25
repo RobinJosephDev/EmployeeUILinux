@@ -53,7 +53,7 @@ const LoginPage = () => {
   
       // Navigate based on user role
       if (data.user.role === 'employee') {
-        navigate('/');
+        navigate('/lead');
       } else {
         message.error('Access denied: Invalid role.');
       }
