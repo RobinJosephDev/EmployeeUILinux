@@ -3,11 +3,13 @@ import { Form, Input, Button, message } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/Auth.css';
 import axios from 'axios';
+import { useUser } from '../../UserProvider';
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const API_URL = import.meta.env.VITE_API_BASE_URL;
+  const { setUserRole } = useUser();
 
   const sanitizeInput = (input) => input.replace(/[<>"/=]/g, '');
 
@@ -43,31 +45,31 @@ const LoginPage = () => {
     }
   };
 
-    // Handle successful login (save token and navigate)
-    const handleLoginSuccess = (data) => {
-      localStorage.setItem('token', data.token); // Save token to localStorage
-      localStorage.setItem('userId', data.user.id); // Save user ID
-      localStorage.setItem('userRole', data.user.role); // Save user role
-  
-      axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`; // Set header for future requests
-  
-      // Navigate based on user role
-      if (data.user.role === 'employee') {
-        navigate('/lead');
-      } else {
-        message.error('Access denied: Invalid role.');
-      }
-    };
+  // Handle successful login (save token and navigate)
+  const handleLoginSuccess = (data) => {
+    const expiryTime = Date.now() + 1 * 60 * 60 * 1000;
+
+    localStorage.setItem('token', data.token);
+    localStorage.setItem('userId', data.user.id);
+    localStorage.setItem('userRole', data.user.role);
+    localStorage.setItem('tokenExpiry', expiryTime.toString());
+
+    setUserRole(data.user.role); // Update context state
+    axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
+
+    if (data.user.role === 'employee') {
+      navigate('/lead');
+    } else {
+      message.error('Access denied: Invalid role.');
+    }
+  };
 
   return (
     <div className="auth-container">
       <div className="auth-card">
         <h2 className="auth-title">Employee Login</h2>
         <Form onFinish={onFinish}>
-          <Form.Item
-            name="username" // Use 'username' here
-            rules={[{ required: true, message: 'Please input your username!' }]}
-          >
+          <Form.Item name="username" rules={[{ required: true, message: 'Please input your username!' }]}>
             <Input placeholder="Username" />
           </Form.Item>
           <Form.Item name="password" rules={[{ required: true, message: 'Please input your password!' }]}>

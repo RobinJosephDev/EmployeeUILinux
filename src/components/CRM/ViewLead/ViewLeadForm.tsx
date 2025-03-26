@@ -34,6 +34,8 @@ const ViewLeadForm: React.FC<ViewLeadFormProps> = ({ lead, onClose }) => {
     follow_up_date: '',
     assigned_to: '',
     contacts: [],
+    created_at:'',
+    updated_at:''
   });
 
   useEffect(() => {

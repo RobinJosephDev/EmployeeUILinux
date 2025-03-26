@@ -1,10 +1,9 @@
 import { Route, Routes } from 'react-router-dom';
 import { Suspense, lazy } from 'react';
-import PrivateRoute from './components/common/PrivateRoute';
+import ProtectedRoute from './components/common/ProtectedRoute';
 import UserProvider from './UserProvider';
 
 const LoginPage = lazy(() => import('./pages/Auth/LoginPage'));
-const Logout = lazy(() => import('./pages/Auth/Logout'));
 const LeadsPage = lazy(() => import('./pages/CRM/LeadsPage'));
 const LeadFollowupPage = lazy(() => import('./pages/CRM/LeadFollowupPage'));
 
@@ -12,30 +11,32 @@ const AppRoutes: React.FC = () => (
   <UserProvider>
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        {/* Auth */}
-
+        {/* Public Routes */}
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/logout" element={<Logout />} />
 
-        {/* Lead */}
-
+        {/* Protected Routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <LeadsPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/lead"
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <LeadsPage />
-            </PrivateRoute>
+            </ProtectedRoute>
           }
         />
-
-        {/* Follow-up */}
-
         <Route
           path="/follow-up"
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <LeadFollowupPage />
-            </PrivateRoute>
+            </ProtectedRoute>
           }
         />
       </Routes>
