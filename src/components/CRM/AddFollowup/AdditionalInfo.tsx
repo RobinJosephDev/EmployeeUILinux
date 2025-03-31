@@ -9,7 +9,10 @@ interface AdditionalInfoProps {
 }
 
 const addInfoSchema = z.object({
-  next_follow_up_date: z.string().optional(),
+  next_follow_up_date: z
+    .string()
+    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
+    .optional(),
   contact_person: z
     .string()
     .max(200, 'Contact name must be at most 200 characters long')
