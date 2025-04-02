@@ -42,9 +42,11 @@ const EditLeadForm: React.FC<EditLeadFormProps> = ({ lead, onClose, onUpdate }) 
                 handleRemoveContact={handleRemoveContact}
               />
             ))}
-            <button type="button" onClick={handleAddContact} className="add-button">
-              <PlusOutlined />
-            </button>
+            {formLead.contacts.length === 0 && (
+              <button type="button" onClick={handleAddContact} className="add-button">
+                <PlusOutlined />
+              </button>
+            )}
           </div>
         </fieldset>
 
