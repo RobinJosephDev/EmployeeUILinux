@@ -105,8 +105,12 @@ const LeadFollowupTable: React.FC = () => {
 
   return (
     <div>
-      <div className="header-container">
-        <h1 className="page-heading">Lead Follow-ups</h1>
+      <div className="header-container" style={{ top: '-0.5rem' }}>
+        <div className="header-container-left">
+          <div className="header-actions">
+            <h1 className="page-heading">Lead Follow-ups</h1>
+          </div>
+        </div>
         <div className="search-container">
           <div className="search-input-wrapper">
             <SearchOutlined className="search-icon" />
