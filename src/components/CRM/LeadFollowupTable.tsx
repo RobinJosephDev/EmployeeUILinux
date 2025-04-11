@@ -1,3 +1,4 @@
+import React from 'react';
 import { EditOutlined, DeleteOutlined, EyeOutlined, PlusOutlined, SearchOutlined, CalendarOutlined } from '@ant-design/icons';
 import { Table, TableHeader } from '../common/Table';
 import Modal from '../common/Modal';
@@ -147,8 +148,8 @@ const LeadFollowupTable: React.FC = () => {
       </Modal>
 
       {/* Edit Followup Modal */}
-      <Modal isOpen={isEditModalOpen} onClose={closeEditModal} title="Edit Followup">
-        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={closeEditModal} onUpdate={updateFollowup} />}
+      <Modal isOpen={isEditModalOpen} onClose={() => setEditModalOpen(false)} title="Edit Followup">
+        {selectedFollowup && <EditFuForm followup={selectedFollowup} onClose={() => setEditModalOpen(false)} onUpdate={updateFollowup} />}
       </Modal>
 
       {/* View Followup Modal */}

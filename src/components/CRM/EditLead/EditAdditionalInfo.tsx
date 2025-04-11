@@ -21,9 +21,6 @@ const addInfoSchema = z.object({
     .max(200, 'Contact name must be at most 200 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]*$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  lead_type: z.enum(['AB', 'BC', 'BDS', 'CA', 'DPD MAGMA', 'MB', 'ON', 'Super Leads', 'TBAB', 'USA'], {
-    errorMap: () => ({ message: 'Invalid lead type' }),
-  }),
   equipment_type: z
     .enum(['Van', 'Reefer', 'Flatbed', 'Triaxle', 'Maxi', 'Btrain', 'Roll tite'], {
       errorMap: () => ({ message: 'Invalid equipment type' }),
@@ -33,8 +30,7 @@ const addInfoSchema = z.object({
     .string()
     .min(1, 'Assigned To is required')
     .max(200, 'Assigned To must be at most 200 characters long')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Only letters, spaces, apostrophes, and hyphens allowed')
-    .optional(),
+    .regex(/^[a-zA-Z\s'-]+$/, 'Only letters, spaces, apostrophes, and hyphens allowed'),
   notes: z
     .string()
     .max(500, 'Notes must be at most 200 characters long')
@@ -78,7 +74,14 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+
+    if (field === 'follow_up_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = addInfoSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -87,7 +90,7 @@ const EditAdditionalInfo: React.FC<EditAdditionalInfoProps> = ({ formLead, setFo
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [

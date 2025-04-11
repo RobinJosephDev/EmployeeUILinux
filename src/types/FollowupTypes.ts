@@ -4,9 +4,10 @@ export interface Contact {
   email: string;
 }
 
+
 export interface Product {
   name: string;
-  quantity: string;
+  quantity: number;
 }
 
 export interface Followup {

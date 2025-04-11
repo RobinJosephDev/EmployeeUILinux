@@ -35,23 +35,16 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
 
   useEffect(() => {
     if (followup) {
-      setFollowupEdit({
+      const parsedContacts = Array.isArray(followup.contacts) ? followup.contacts : JSON.parse(followup.contacts || '[]');
+      const parsedProducts = Array.isArray(followup.products) ? followup.products : JSON.parse(followup.products || '[]');
+
+      const updatedFollowup = {
         ...followup,
-        contacts:
-          Array.isArray(followup.contacts) && followup.contacts.length > 0
-            ? followup.contacts.map((contact) => ({
-                ...contact,
-                id: contact.id,
-              }))
-            : [], // Default to empty array if contacts is NULL or invalid
-        products:
-          Array.isArray(followup.products) && followup.products.length > 0
-            ? followup.products.map((product) => ({
-                ...product,
-                id: product.id,
-              }))
-            : [],
-      });
+        contacts: parsedContacts.length > 0 ? parsedContacts : [],
+        products: parsedProducts.length > 0 ? parsedProducts : [],
+      };
+
+      setFollowupEdit(updatedFollowup);
     }
   }, [followup]);
 
@@ -100,57 +93,42 @@ const useEditFollowup = (followup: Followup | null, onClose: () => void, onUpdat
     }
   };
 
-  // ✅ Add new contact with a unique UUID
+  //Contacts
   const handleAddContact = () => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: [
-        ...prevFollowup.contacts,
-        { id: '', name: '', phone: '', email: '' }, // Unique UUID
-      ],
-    }));
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, contacts: [...prevFollowup.contacts, { name: '', phone: '', email: '' }] } : prevFollowup
+    );
   };
 
-  // ✅ Add new product with a unique UUID
+  const handleRemoveContact = (index: number) => {
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, contacts: prevFollowup.contacts.filter((_, i) => i !== index) } : prevFollowup
+    );
+  };
+
+  const handleContactChange = (index: number, updatedContact: Contact) => {
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, contacts: prevFollowup.contacts.map((contact, i) => (i === index ? updatedContact : contact)) } : prevFollowup
+    );
+  };
+
+  //Products
   const handleAddProduct = () => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: [
-        ...prevFollowup.products,
-        { id: '', name: '', quantity: 0 },
-      ],
-    }));
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, products: [...prevFollowup.products, { name: '', quantity: 0 }] } : prevFollowup
+    );
   };
 
-  // ✅ Update a contact by ID
-  const handleContactChange = (id: string | number, updatedContact: Contact) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: prevFollowup.contacts.map((contact) => (contact.id === id ? updatedContact : contact)),
-    }));
+  const handleRemoveProduct = (index: number) => {
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, products: prevFollowup.products.filter((_, i) => i !== index) } : prevFollowup
+    );
   };
 
-  const handleRemoveContact = (id: string | number) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      contacts: prevFollowup.contacts.filter((contact) => contact.id !== id), // Ensure ID is unique
-    }));
-  };
-
-  // ✅ Update a product by ID
-  const handleProductChange = (id: string | number, updatedProduct: Product) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: prevFollowup.products.map((product) => (product.id === id ? updatedProduct : product)),
-    }));
-  };
-
-  // ✅ Remove a product by ID
-  const handleRemoveProduct = (id: string | number) => {
-    setFollowupEdit((prevFollowup) => ({
-      ...prevFollowup,
-      products: prevFollowup.products.filter((product) => product.id !== id),
-    }));
+  const handleProductChange = (index: number, updatedProduct: Product) => {
+    setFollowupEdit((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, products: prevFollowup.products.map((product, i) => (i === index ? updatedProduct : product)) } : prevFollowup
+    );
   };
 
   return {

@@ -96,6 +96,7 @@ export const useAddFollowup = (onClose: () => void, onSuccess: () => void) => {
     });
   };
 
+  //Contacts
   const handleAddContact = () => {
     setFollowup((prev) => ({
       ...prev,
@@ -118,11 +119,11 @@ export const useAddFollowup = (onClose: () => void, onSuccess: () => void) => {
     }));
   };
 
+  //Products
   const handleAddProduct = () => {
-    setFollowup((prev) => ({
-      ...prev,
-      products: [...prev.products, { name: '', quantity: '' }],
-    }));
+    setFollowup((prevFollowup) =>
+      prevFollowup ? { ...prevFollowup, products: [...prevFollowup.products, { name: '', quantity: 0 }] } : prevFollowup
+    );
   };
 
   const handleRemoveProduct = (index: number) => {

@@ -14,10 +14,11 @@ const leadDetailSchema = z.object({
     .max(200, 'Legal No must be at most 200 characters long')
     .regex(/^[a-zA-Z0-9\s.,'-]+$/, 'Only letters, numbers,spaces, apostrophes, periods, commas, and hyphens allowed')
     .optional(),
-  lead_date: z    .string()
-  .min(1, 'Lead Date is required')
-  .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
-  .optional(),
+  lead_date: z
+    .string()
+    .min(1, 'Lead Date is required')
+    .regex(/^\d{2}-\d{2}-\d{4}$/, { message: 'Date must be in DD-MM-YYYY format' })
+    .optional(),
   customer_name: z
     .string()
     .max(200, 'Customer Name must be at most 200 characters long')
@@ -61,7 +62,15 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
     const sanitizedValue = DOMPurify.sanitize(value);
     let error = '';
 
-    const tempLead = { ...formLead, [field]: sanitizedValue };
+    let transformedValue = sanitizedValue;
+
+    // Convert YYYY-MM-DD to DD-MM-YYYY before validation
+    if (field === 'lead_date' && /^\d{4}-\d{2}-\d{2}$/.test(sanitizedValue)) {
+      const [yyyy, mm, dd] = sanitizedValue.split('-');
+      transformedValue = `${dd}-${mm}-${yyyy}`;
+    }
+
+    const tempLead = { ...formLead, [field]: transformedValue };
     const result = leadDetailSchema.safeParse(tempLead);
 
     if (!result.success) {
@@ -70,7 +79,7 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
     }
 
     setErrors((prevErrors) => ({ ...prevErrors, [field]: error }));
-    setFormLead(tempLead);
+    setFormLead((prevLead) => ({ ...prevLead, [field]: sanitizedValue }));
   };
 
   const fields = [
@@ -115,7 +124,9 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
             value={formLead.lead_type || ''}
             onChange={(e) => setFormLead((prevLead) => ({ ...prevLead, lead_type: e.target.value }))}
           >
-            <option value="" disabled>Select Lead Type</option>
+            <option value="" disabled>
+              Select Lead Type
+            </option>
             <option value="AB">AB</option>
             <option value="BC">BC</option>
             <option value="BDS">BDS</option>
@@ -142,7 +153,9 @@ const EditLeadDetails: React.FC<EditLeadDetailsProps> = ({ formLead, setFormLead
             value={formLead.lead_status || ''}
             onChange={(e) => setFormLead((prevLead) => ({ ...prevLead, lead_status: e.target.value }))}
           >
-            <option value="" disabled>Select Lead Status</option>
+            <option value="" disabled>
+              Select Lead Status
+            </option>
             <option value="Prospect">Prospect</option>
             <option value="Lanes discussed">Lanes discussed</option>
             <option value="Prod/Equip noted">Prod/Equip noted</option>

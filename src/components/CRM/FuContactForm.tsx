@@ -16,7 +16,7 @@ const contactSchema = z.object({
   name: z
     .string()
     .max(200, 'Name must be at most 200 characters')
-    .regex(/^[a-zA-Z\s.,'-]+$/, 'Only letters, spaces, apostrophes, periods,commas and hyphens allowed')
+    .regex(/^[a-zA-Z\s.,'-]*$/, 'Only letters, spaces, apostrophes, periods, commas and hyphens allowed')
     .optional(),
   phone: z
     .string()
@@ -57,25 +57,24 @@ const FuContactForm: FC<FuContactFormProps> = ({ contacts, index, handleContactC
 
   return (
     <fieldset className="form-section" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-        {fields.map(({ label, key, type, placeholder }) => (
-          <div className="form-group" key={key} style={{ display: 'flex', flexDirection: 'column' }}>
-            <label htmlFor={`${key}-${index}`}>{label}</label>
-            <input
-              id={`${key}-${index}`}
-              type={type}
-              name={key}
-              value={(contact[key as keyof Contact] as string) || ''}
-              onChange={(e) => validateAndSetContact(key as keyof Contact, e.target.value)}
-              placeholder={placeholder}
-            />
-            {errors[key] && (
-              <span className="error" style={{ color: 'red' }}>
-                {errors[key]}
-              </span>
-            )}
-          </div>
-        ))}
-  
+      {fields.map(({ label, key, type, placeholder }) => (
+        <div className="form-group" key={key} style={{ display: 'flex', flexDirection: 'column' }}>
+          <label htmlFor={`${key}-${index}`}>{label}</label>
+          <input
+            id={`${key}-${index}`}
+            type={type}
+            name={key}
+            value={(contact[key as keyof Contact] as string) || ''}
+            onChange={(e) => validateAndSetContact(key as keyof Contact, e.target.value)}
+            placeholder={placeholder}
+          />
+          {errors[key] && (
+            <span className="error" style={{ color: 'red' }}>
+              {errors[key]}
+            </span>
+          )}
+        </div>
+      ))}
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '0px' }}>
         <button type="button" onClick={onAddContact} className="add-button">
